@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card'
 import Image from 'next/image'
 
+
 interface Recipe {
   title: string
   image: string
@@ -24,9 +25,8 @@ import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 async function getRecipes(): Promise<Recipe[]> {
-  const result = await fetch('http://lawsonserver.xyz:44000/recipes')
-
-  return result.json()
+  const result = (await fetch('http://lawsonserver.xyz:44000/recipes')).json()
+  return result;
 }
 
 export default async function Dashboard() {
@@ -48,7 +48,8 @@ export default async function Dashboard() {
         </div>
       </nav>
       <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {recipes.map(recipe => (
+      {recipes && recipes.length > 0 ? (
+   recipes.map(recipe => (
           <Card key={recipe.id} className="flex flex-col justify-between">
             <CardHeader className="flex-row gap-4 items-center">
               <div className="w-full">
@@ -72,7 +73,10 @@ export default async function Dashboard() {
               {recipe.vegan && <Badge variant={'secondary'}>Vegan!</Badge>}
             </CardFooter>
           </Card>
-        ))}
+   )
+   )) : (
+    <div>Loading...</div>
+   )}
       </div>
     </>
   )
