@@ -14,8 +14,12 @@ import Image from 'next/image'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Sheet } from '@/components/ui/sheet'
-import { Recipe, RecipeResponse } from '../../interfaces/recipe'
+import { PocketBaseTestRecipe, Recipe, RecipeResponse } from '../../interfaces/recipe'
 import Link from 'next/link'
+import PocketBase from 'pocketbase'
+
+const pb = new PocketBase('http://127.0.0.1:8090');
+
 
 async function getRecipes() {
   const res = await fetch('https://mealplan.lawsonserver.xyz/api/recipes');
@@ -32,9 +36,27 @@ async function getRecipes() {
   return data.recipes;
 }
 
+async function getTestRecipes() {
+  const recipesResponse = await pb.collection('test_recipes').getList(1, 50);
+  const recipes = recipesResponse.items.map(item => ({
+    collectionId: item.collectionId,
+    collectionName: item.collectionName,
+    description: item.description,
+    id: item.id,
+    image: item.image,
+    title: item.title,
+    time: item.time,
+    vegan: item.vegan,
+    created: item.created,
+    updated: item.updated
+  }));
+  return recipes;
+}
+
 
 export default async function Dashboard() {
-  const recipes: Recipe[] = await getRecipes()
+  // const recipes: Recipe[] = await getRecipes()
+  const recipes: PocketBaseTestRecipe[] = await getTestRecipes()
   return (
     <>
       <nav className="max-w-none">
